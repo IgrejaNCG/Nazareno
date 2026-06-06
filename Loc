@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: black;
+        }
+
+        h1, #bach
+        {
+            justify-content: center;
+            align-items: center;
+        }
+
+        #bah {
+            color: white;
+            height: 100px;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            min-height: 100px;
+            max-height: 100px;
+            min-width: 100px;
+            max-width: 100px;
+            background-image: url(https://i.imgur.com/M74ypWW.png);
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #bach {
+            color: cyan;
+            text-decoration: none;
+            font-size: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #bach:hover {
+            text-decoration: underline;
+        }
+    
+    </style>
+</head>
+<body>
+    <a id="bah" href="C:\Users\isaqu\Documents\VS\Igreja\Site.html">
+        <img id="bah" src="https://i.imgur.com/M74ypWW.png" alt="">
+    </a>
+    <div>
+            <h1>R. Dom Pedro II, 555 - Morada de Santa Fé</h1>
+
+     <a id="bach" href="https://maps.app.goo.gl/Ky9sFH6DUHRwpxjN8?g_st=aw" target="_blank">
+        Localização no Google Maps
+    </a>
+        <nav>
+            <img id="logo" src="https://i.imgur.com/cMRZ0eF.png" alt="logo">
+    </div>
+</body>
+</html> 
