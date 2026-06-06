@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cifras</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#000;
+    color:#fff;
+    font-family:Consolas, monospace;
+}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:999;
+
+    background:#111;
+    border-bottom:1px solid #222;
+
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+
+    padding:15px;
+}
+
+button,
+select{
+    background:#1f1f1f;
+    color:white;
+    border:1px solid #333;
+    border-radius:8px;
+    padding:10px 15px;
+    cursor:pointer;
+}
+
+button:hover,
+select:hover{
+    background:#2d2d2d;
+}
+
+main{
+    max-width:1000px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.linha-acordes{
+    color:#00cfff;
+    font-weight:bold;
+    white-space:pre;
+    font-size:20px;
+}
+
+.linha-letra{
+    color:white;
+    white-space:pre;
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+#velocidade{
+    width:150px;
+}
+
+#tomAtual{
+    min-width:70px;
+    text-align:center;
+    font-weight:bold;
+}
+
+textarea{
+    display:none;
+}
+
+</style>
+
+</head>
+<body>
+
+<header>
+
+<button onclick="window.location.href='cifras.html'">
+← Voltar para Cifras
+</button>
+
+<div id="tomAtual">0</div>
+
+<button onclick="transpor(-1)">−</button> <button onclick="transpor(1)">+</button>
+
+<select id="instrumento">
+<option>Baixo</option>
+<option>Teclado</option>
+<option>Violão</option>
+<option>Guitarra</option>
+<option>Voz</option>
+</select>
+
+<button onclick="toggleScroll()">
+Auto Scroll
+</button>
+
+<input
+type="range"
+id="velocidade"
+min="1"
+max="20"
+value="5">
+
+</header>
+
+<main id="cifraRenderizada"></main>
+
+<textarea id="cifraFonte"></textarea>
+
+<script>
+
+const notas = [
+"C","C#","D","D#","E","F",
+"F#","G","G#","A","A#","B"
+];
+
+let deslocamentoTom = 0;
+
+const musicas = {
+
+"Baixo": `
+[INTRO]
+
+[INÍCIO]
+
+Junto ao poço estava eu
+Quando um homem judeu
+Viu a sede que havia em mim
+Sem me ouvir, conheceu
+E me ofereceu uma água que jorra sem fim
+
+[PRÉ-REFRÃO]
+
+Dá-me de beber, pois tenho sede
+Não quero mais buscar em outras fontes
+Não precisarei aqui voltar pra minha sede saciar
+Uma vez que eu já ouvi Teu falar
+
+[REFRÃO]
+
+Tu é[D]s por[P] quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvad[1]or
+
+
+[PONTE-INSTRUMENTAL(8 Compassos)]
+
+
+[Bm7]  Junto ao poço est[A]ava eu
+[G]Quando um homem judeu
+Viu a s[Bm7]ede que hav[A]ia em mi[G]m
+[Bm7]  Sem me ouvir, c[A]onheceu
+[G]E me ofereceu uma á[Bm7]gua que jor[A]ra sem fi[G]m
+
+[PRÉ-REFRÃO]
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu [2]falar
+
+[REFRÃO]
+
+Tu é[D]s por[P] quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por[P] quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvad[1]or
+
+[PRÉ-REFRÃO]
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es  [3]
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu fala[A]r
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu [2]falar
+
+[REFRÃO]
+
+Tu é[D]s por[P] quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por[P] quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvad[FRASE 1]or
+
+[PONTE]
+
+[D]Quero beber do Teu r[D4/G]io, Senh[D]or
+Saci[G]a a minha se[D/F#]de, lava o m[Em]eu interi[F#]or
+Eu que[Bm7]ro fluir em [A]Tuas ág[G]uas
+[A]  Eu qu[Bm7]ero beber da [A]Tua fo[G]nte
+Fonte de águas vi[A]vas
+
+[ ESPERA 1]
+
+[D]Quero beber do Teu r[D4/G]io, Senh[D]or
+Saci[G]a a minha se[D/F#]de, lava o m[Em]eu interi[F#]or
+Eu que[Bm7]ro fluir em [A]Tuas ág[G]uas
+[A]  Eu qu[Bm7]ero beber da [A]Tua fo[G]nte
+Fonte de águas vi[A]vas
+
+[ ESPERA 2]
+
+
+
+[REFRÃO FINAL]
+
+Tu é[D]s por[P] quem a minh'alma esper[C]ou
+A fonte da vida que me[G] encontrou
+És o dom de Deus, o Mess[Bb]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por[P] quem a minh'alma esper[C]ou
+A fonte da vida que me[G] encontrou
+És o dom de Deus, o Mess[Bb]ias
+O meu Sa[A]lvado[4]r
+
+`,
+
+"Teclado": `
+[INTRO]
+
+[INÍCIO]
+
+Junto ao poço estava eu
+Quando um homem judeu
+Viu a sede que havia em mim
+Sem me ouvir, conheceu
+E me ofereceu uma água que jorra sem fim
+
+[PRÉ-REFRÃO]
+
+Dá-me de beber, pois tenho sede
+Não quero mais buscar em outras fontes
+Não precisarei aqui voltar pra minha sede saciar
+Uma vez que eu já ouvi Teu falar
+
+[REFRÃO]
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A4]lvado[A]r
+
+
+[PONTE-INSTRUMENTAL(8 Compassos)]PAD
+
+[Bm7]
+[A] tempo 4 (1 compasso)
+[G] tempo 1 (3 compasso)
+[Em] tempo 4 (3 compasso)
+[Bm7] tempo 1 [ FRASE OITAVADA] (5 compasso)
+[A] tempo 4 (5 compasso)
+[G] tempo 1 (7 compasso)
+
+[INÍCIO]
+
+[Bm7]  Junto ao poço est[A]ava eu
+[G]Quando um homem ju[Em]deu
+Viu a s[Bm7]ede que hav[A]ia em mi[G]m
+[Bm7]  Sem me ouvir, c[A]onheceu
+[G]E me ofere[Em]ceu uma á[Bm7]gua que jor[A]ra sem fi[G]m
+
+[PRÉ-REFRÃO]
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu falar
+
+[REFRÃO]
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A4]lvado[A]r
+
+[PRÉ-REFRÃO]
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu fala[A]r
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu [ FRASE]falar
+
+[REFRÃO]
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A4]lvado[A]r
+
+[PONTE]
+
+[D]Quero beber do Teu r[D4/G]io, Senh[D]or
+Saci[G]a a minha se[D/F#]de, lava o m[Em]eu interi[F#]or
+Eu que[Bm7]ro fluir em [A]Tuas ág[G]uas
+[A]  Eu qu[Bm7]ero beber da [A]Tua fo[G]nte
+Fonte de águas vi[A]vas
+
+[4 COMP]
+
+[D]Quero beber do Teu r[D4/G]io, Senh[D]or
+Saci[G]a a minha se[D/F#]de, lava o m[Em]eu interi[F#]or
+Eu que[Bm7]ro fluir em [A]Tuas ág[G]uas
+[A]  Eu qu[Bm7]ero beber da [A]Tua fo[G]nte
+Fonte de águas vi[A]vas
+
+[4 COMP]
+
+[REFRÃO FINAL]
+
+Tu é[D]s por quem a minh'alma esper[C]ou
+A fonte da vida que me[G] encontrou
+És o dom de Deus, o Mess[Bb]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por quem a minh'alma esper[C]ou
+A fonte da vida que me[G] encontrou
+És o dom de Deus, o Mess[Bb]ias
+O meu Sa[A4]lvado[Am]r
+
+`,
+
+
+"Violão": `
+[INTRO]
+[Bm7]     [A]   [G]
+
+
+[Bm7]  Junto ao poço est[A]ava eu
+[G]Quando um homem judeu
+Viu a s[Bm7]ede que hav[A]ia em mi[G]m
+[Bm7]  Sem me ouvir, c[A]onheceu
+[G]E me ofereceu uma á[Bm7]gua que jor[A]ra sem fi[G]m
+
+[PRÉ-REFRÃO]
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu fal[A]ar
+
+[REFRÃO]
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A4]lvado[A]r
+
+
+[PONTE-INSTRUMENTAL(8 Compassos)]PAD
+
+[Bm7]
+[A] tempo 4 (1 compasso)
+[G] tempo 1 (3 compasso)
+[Em] tempo 4 (3 compasso)
+[Bm7] tempo 1 (5 compasso)
+[A] tempo 4 (5 compasso)
+[G] tempo 1 (7 compasso)
+
+[INÍCIO]
+
+[Bm7]  Junto ao poço est[A]ava eu
+[G]Quando um homem ju[Em]deu
+Viu a s[Bm7]ede que hav[A]ia em mi[G]m
+[Bm7]  Sem me ouvir, c[A]onheceu
+[G]E me ofere[Em]ceu uma á[Bm7]gua que jor[A]ra sem fi[G]m
+
+[PRÉ-REFRÃO]
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu fal[A]ar
+
+[REFRÃO]
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A4]lvado[A]r
+
+[PRÉ-REFRÃO]
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu fala[A]r
+
+[Em]Dá-me de beber, pois tenho s[D/F#]ede
+Não quero mais busc[G]ar em outras font[D/F#]es
+[Em]Não precisarei aqui volt[D/F#]ar pra minha sede sacia[G]r
+Uma vez que eu já ou[A4]vi Teu fal[A]ar
+
+[REFRÃO]
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por quem a minh'alma esper[G]ou
+A fonte da vida [D/F#]que me[Em] encontrou
+És o dom de Deus, o Mess[G]ias
+O meu Sa[A4]lvado[A]r
+
+[PONTE]
+
+[D]Quero beber do Teu r[D4/G]io, Senh[D]or
+Saci[G]a a minha se[D/F#]de, lava o m[Em]eu interi[F#]or
+Eu que[Bm7]ro fluir em [A]Tuas ág[G]uas
+[A]  Eu qu[Bm7]ero beber da [A]Tua fo[G]nte
+Fonte de águas vi[A]vas
+
+[4 COMP]
+
+[D]Quero beber do Teu r[D4/G]io, Senh[D]or
+Saci[G]a a minha se[D/F#]de, lava o m[Em]eu interi[F#]or
+Eu que[Bm7]ro fluir em [A]Tuas ág[G]uas
+[A]  Eu qu[Bm7]ero beber da [A]Tua fo[G]nte
+Fonte de águas vi[A]vas
+
+[4 COMP]
+
+[REFRÃO FINAL]
+
+Tu é[D]s por quem a minh'alma esper[C]ou
+A fonte da vida que me[G] encontrou
+És o dom de Deus, o Mess[Bb]ias
+O meu Sa[A]lvador
+
+Tu é[D]s por quem a minh'alma esper[C]ou
+A fonte da vida que me[G] encontrou
+És o dom de Deus, o Mess[Bb]ias
+O meu Sa[A4]lvado[Am]r
+
+`,
+
+"Guitarra": `
+[D]Exemplo para guitarra
+`,
+
+"Voz": `
+[INTRO]
+
+[INÍCIO]
+
+Junto ao poço estava eu
+Quando um homem judeu
+Viu a sede que havia em mim
+Sem me ouvir, conheceu
+E me ofereceu uma água que jorra sem fim
+
+[PRÉ-REFRÃO]
+
+Dá-me de beber, pois tenho sede
+Não quero mais buscar em outras fontes
+Não precisarei aqui voltar pra minha sede saciar
+Uma vez que eu já ouvi Teu falar
+
+[REFRÃO]
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+
+[PONTE-INSTRUMENTAL(8 Compassos)]
+
+
+[INÍCIO]
+
+Junto ao poço estava eu
+Quando um homem judeu
+Viu a sede que havia em mim
+Sem me ouvir, conheceu
+E me ofereceu uma água que jorra sem fim
+
+[PRÉ-REFRÃO]
+
+Dá-me de beber, pois tenho sede
+Não quero mais buscar em outras fontes
+Não precisarei aqui voltar pra minha sede saciar
+Uma vez que eu já ouvi Teu falar
+
+[REFRÃO]
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+
+[PRÉ-REFRÃO]
+
+Dá-me de beber, pois tenho sede
+Não quero mais buscar em outras fontes
+Não precisarei aqui voltar pra minha sede saciar
+Uma vez que eu já ouvi Teu falar
+
+Dá-me de beber, pois tenho sede
+Não quero mais buscar em outras fontes
+Não precisarei aqui voltar pra minha sede saciar
+Uma vez que eu já ouvi Teu falar
+
+[REFRÃO]
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+
+[PONTE]
+
+Quero beber do Teu rio, Senhor
+Sacia a minha sede, lava o meu interior
+Eu quero fluir em Tuas águas
+Eu quero beber da Tua fonte
+Fonte de águas vivas
+
+[ ESPERA DE 4 COMPASSOS]
+
+Quero beber do Teu rio, Senhor
+Sacia a minha sede, lava o meu interior
+Eu quero fluir em Tuas águas
+Eu quero beber da Tua fonte
+Fonte de águas vivas
+
+[ESPERA DE 4 COMPASSOS]
+
+[REFRÃO]
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+
+Tu és por quem a minh'alma esperou
+A fonte da vida que me encontrou
+És o dom de Deus, o Messias
+O meu Salvador
+`
+};
+
+const fonte =
+document.getElementById("cifraFonte");
+
+const render =
+document.getElementById("cifraRenderizada");
+
+const select =
+document.getElementById("instrumento");
+
+function transporAcorde(acorde,semitons){
+
+    const match =
+    acorde.match(/^([A-G](#)?)(.*)$/);
+
+    if(!match)
+        return acorde;
+
+    let nota = match[1];
+    let resto = match[3];
+
+    let indice =
+    notas.indexOf(nota);
+
+    if(indice === -1)
+        return acorde;
+
+    indice += semitons;
+
+    while(indice < 0)
+        indice += 12;
+
+    indice %= 12;
+
+    return notas[indice] + resto;
+}
+
+function gerarLinha(texto){
+
+    let acordes = "";
+    let letra = "";
+
+    let i = 0;
+
+    while(i < texto.length){
+
+        if(texto[i] === "["){
+
+            let fim =
+            texto.indexOf("]",i);
+
+            if(fim === -1)
+                break;
+
+            let acorde =
+            texto.substring(i+1,fim);
+
+            acorde =
+            transporAcorde(
+                acorde,
+                deslocamentoTom
+            );
+
+            while(
+                acordes.length <
+                letra.length
+            ){
+                acordes += " ";
+            }
+
+            acordes += acorde;
+
+            i = fim + 1;
+
+            continue;
+        }
+
+        letra += texto[i];
+
+        if(acordes.length <
+           letra.length){
+
+            acordes += " ";
+        }
+
+        i++;
+    }
+
+    return {
+        acordes,
+        letra
+    };
+}
+
+function renderizar(){
+
+    render.innerHTML = "";
+
+    const linhas =
+    fonte.value.split("\n");
+
+    linhas.forEach(texto=>{
+
+        const resultado =
+        gerarLinha(texto);
+
+        if(
+            resultado.letra.trim()==="" &&
+            resultado.acordes.trim()===""
+        ){
+            render.innerHTML +=
+            "<br>";
+            return;
+        }
+
+        const linhaA =
+        document.createElement("div");
+
+        linhaA.className =
+        "linha-acordes";
+
+        linhaA.textContent =
+        resultado.acordes;
+
+        const linhaL =
+        document.createElement("div");
+
+        linhaL.className =
+        "linha-letra";
+
+        linhaL.textContent =
+        resultado.letra;
+
+        render.appendChild(linhaA);
+        render.appendChild(linhaL);
+
+    });
+
+}
+
+function transpor(valor){
+
+    deslocamentoTom += valor;
+
+    document
+    .getElementById("tomAtual")
+    .textContent =
+    (deslocamentoTom > 0 ? "+" : "")
+    + deslocamentoTom;
+
+    renderizar();
+}
+
+select.addEventListener(
+"change",
+()=>{
+    fonte.value =
+    musicas[
+        select.value
+    ];
+
+    renderizar();
+});
+
+let scrollAtivo = false;
+let scrollTimer;
+
+function toggleScroll(){
+
+    if(scrollAtivo){
+
+        clearInterval(
+        scrollTimer
+        );
+
+        scrollAtivo = false;
+        return;
+    }
+
+    scrollAtivo = true;
+
+    scrollTimer =
+    setInterval(()=>{
+
+        let velocidade =
+        Number(
+        document
+        .getElementById(
+        "velocidade"
+        ).value);
+
+        window.scrollBy(
+            0,
+            velocidade
+        );
+
+    },100);
+
+}
+
+fonte.value =
+musicas[
+select.value
+];
+
+renderizar();
+
+</script>
+
+</body>
+</html>
